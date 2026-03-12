@@ -467,7 +467,7 @@
               
             </div>
         
-            <a href="#" class="admin-tag" onclick="alert('Admin demo: would redirect to admin-login.php'); return false;">
+            <a href="#" class="admin-tag" onclick="alert('Admin : would redirect to admin-login.php'); return false;">
                 <ion-icon name="shield-outline"></ion-icon> Admin
             </a>
         </nav>
@@ -483,7 +483,7 @@
                 <a href="#contact" class="btn btn-secondary"><ion-icon name="call-outline"></ion-icon> Contact Us</a>
             </div>
             
-            <p style="margin-top:2rem; color:rgba(255,255,255,0.7);">Please visit our <a href="https://github.com/singh_niwas/onwork" style="color:var(--accent-color);">GitHub repository</a> for more information.</p>
+            <!-- <p style="margin-top:2rem; color:rgba(255,255,255,0.7);">Please visit our <a href="https://github.com/singh_niwas/onwork" style="color:var(--accent-color);">GitHub repository</a> for more information.</p> -->
         </div>
     </section>
 
@@ -588,9 +588,9 @@
 
         
             const roomsData = [
-                { name: 'Standard Room', price: 'NRS 2,500', desc: 'Comfortable room with all basic amenities for a pleasant stay', guests: 2, bed: '1 Double Bed', img: 'https://image-tc.galaxy.tf/wijpeg-f16cnvozo3oq1o8l5bb4ru31k/standard-deluxe-1_wide.jpg?width=1200&crop=0%2C78%2C1600%2C900' },
-                { name: 'Deluxe Room', price: 'NRS 4,000', desc: 'Spacious room with balcony and premium amenities', guests: 3, bed: '2 Queen Beds', img: 'https://image-tc.galaxy.tf/wijpeg-43drhllmvuepf1pwg6pt79p6a/hotel-barsey-2024-08-08-21-bis-deluxe-room_wide.jpg?crop=0%2C104%2C2000%2C1125&width=800' },
-                { name: 'Executive Suite', price: 'NRS 6,000', desc: 'Luxury suite with separate living area and premium services', guests: 4, bed: 'King Bed + Sofa', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkAiBR8OBv3wdWe7ptDTQbBakewrWreMYjGg&s' }
+                { name: 'Standard Room', price: 'NRS 2,500', desc: 'Comfortable room with all basic amenities for a pleasant stay', guests: 2, bed: '1 Double Bed', img: url('https://image-tc.galaxy.tf/wijpeg-f16cnvozo3oq1o8l5bb4ru31k/standard-deluxe-1_wide.jpg?width=1200&crop=0%2C78%2C1600%2C900')" },
+                { name: 'Deluxe Room', price: 'NRS 4,000', desc: 'Spacious room with balcony and premium amenities', guests: 3, bed: '2 Queen Beds', img: url('https://image-tc.galaxy.tf/wijpeg-43drhllmvuepf1pwg6pt79p6a/hotel-barsey-2024-08-08-21-bis-deluxe-room_wide.jpg?crop=0%2C104%2C2000%2C1125&width=800')" },
+                { name: 'Executive Suite', price: 'NRS 6,000', desc: 'Luxury suite with separate living area and premium services', guests: 4, bed: 'King Bed + Sofa', img:  url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkAiBR8OBv3wdWe7ptDTQbBakewrWreMYjGg&s')" }
             ];
 
             function renderRooms() {
@@ -610,8 +610,8 @@
                                 <span><ion-icon name="bed-outline"></ion-icon> ${room.bed}</span>
                             </div>
                             ${loggedIn ? 
-                                '<a href="#" class="btn btn-primary" onclick="alert(\'Book now – dashboard.php (demo)\'); return false;">Book Now</a>' : 
-                                '<a href="#" class="btn btn-primary" onclick="alert(\'Please login first (demo)\'); return false;">Login to Book</a>'}
+                                '<a href="#" class="btn btn-primary" onclick="alert(\'Book now – dashboard.php \'); return false;">Book Now</a>' : 
+                                '<a href="#" class="btn btn-primary" onclick="alert(\'Please login first \'); return false;">Login to Book</a>'}
                         </div>
                     `;
                     container.appendChild(card);
@@ -623,7 +623,7 @@
                 const authDiv = document.getElementById('dynamicAuth');
                 if (loggedIn) {
                     authDiv.innerHTML = `
-                        <a href="#" class="btn btn-primary" onclick="alert('Dashboard demo'); return false;"><ion-icon name="person-outline"></ion-icon> Dashboard</a>
+                        <a href="#" class="btn btn-primary" onclick="alert; return false;"><ion-icon name="person-outline"></ion-icon> Dashboard</a>
                         <a href="#" class="btn btn-secondary" onclick="toggleLogout(); return false;">Logout</a>
                     `;
                 } else {
