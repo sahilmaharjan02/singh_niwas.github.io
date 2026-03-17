@@ -473,7 +473,7 @@
                  </a>
            </div>
         
-            <a href="#" class="admin-tag" onclick="alert('Admin : would redirect to admin-login.php'); return false;">
+            <a href="#" class="admin-tag" onclick="alert('Admin : would redirect to admin-login.html'); return false;">
                 <ion-icon name="shield-outline"></ion-icon> Admin
             </a>
         </nav>
@@ -673,7 +673,7 @@
                                 <span><ion-icon name="bed-outline"></ion-icon> ${room.bed}</span>
                             </div>
                             ${loggedIn ? 
-                                '<a href="#" class="btn btn-primary" onclick="alert(\'Book now – dashboard.php \'); return false;">Book Now</a>' : 
+                                '<a href="#" class="btn btn-primary" onclick="alert(\'Book now – dashboard.html\'); return false;">Book Now</a>' : 
                                 '<a href="#" class="btn btn-primary" onclick="alert(\'Please login first \'); return false;">Login to Book</a>'}
                         </div>
                     `;
@@ -691,13 +691,13 @@
                     `;
                 } else {
                     authDiv.innerHTML = `
-                        <a href="#" class="btn btn-secondary" onclick="alert('Login page demo'); return false;">Login</a>
-                        <a href="#" class="btn btn-primary" onclick="alert('Register page demo'); return false;">Register</a>
+                        <a href="#" class="btn btn-secondary" onclick="alert('Login page '); return false;">Login</a>
+                        <a href="#" class="btn btn-primary" onclick="alert('Register page '); return false;">Register</a>
                     `;
                 }
            
-                document.getElementById('footerLogin').onclick = (e) => { e.preventDefault(); alert(loggedIn ? 'Already logged in' : 'Login page demo'); };
-                document.getElementById('footerRegister').onclick = (e) => { e.preventDefault(); alert(loggedIn ? 'Already logged in' : 'Register page demo'); };
+                document.getElementById('footerLogin').onclick = (e) => { e.preventDefault(); alert(loggedIn ? 'Already logged in' : 'Login page '); };
+                document.getElementById('footerRegister').onclick = (e) => { e.preventDefault(); alert(loggedIn ? 'Already logged in' : 'Register page '); };
 
                 renderRooms();
             }
@@ -706,7 +706,7 @@
             window.toggleLogout = function() {
                 loggedIn = false;
                 updateUIBasedOnLogin();
-                showToast('Logged out (demo)');
+                showToast('Logged out ');
             };
 
             
