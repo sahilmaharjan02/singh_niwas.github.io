@@ -418,3 +418,388 @@
     </div>
 </div>
 <footer>Singh Niwas — your comfort, our tradition</footer>
+ <script>
+        let currentUser = null;
+        let selectedPaymentMethod = '';
+
+        // Navigation Functions
+        function showLogin() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        function showRegister() {
+            hideModal('loginModal');
+            document.getElementById('registerModal').classList.add('show');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('dashboard').classList.add('hidden');
+            document.querySelector('.navbar').classList.remove('hidden');
+            document.getElementById('home').scrollIntoView();
+            updateAuthButtons();
+        }
+
+        function updateAuthButtons() {
+            const authButtons = document.getElementById('authButtons');
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <a href="#" class="btn btn-primary" onclick="showDashboard()">
+                        <ion-icon name="person-outline"></ion-icon>
+                        Dashboard
+                    </a>
+                    <a href="#" class="btn btn-secondary" onclick="logout()">Logout</a>
+                `;
+            } else {
+                authButtons.innerHTML = `
+                    <a href="#" class="btn btn-secondary" onclick="showLogin()">Login</a>
+                    <a href="#" class="btn btn-primary" onclick="showRegister()">Register</a>
+                `;
+            }
+        }
+
+        function showDashboard() {
+            document.querySelector('.navbar').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('dashboardUserName').textContent = currentUser.name;
+            document.getElementById('userName').textContent = currentUser.name;
+            updateDashboardData();
+        }
+
+        function showDashboardSection(section) {
+            // Hide all sections
+            document.getElementById('dashboard-main').classList.add('hidden');
+            document.getElementById('dashboard-bookings').classList.add('hidden');
+            document.getElementById('dashboard-payments').classList.add('hidden');
+            document.getElementById('dashboard-new-booking').classList.add('hidden');
+            document.getElementById('dashboard-profile').classList.add('hidden');
+
+            // Show selected section
+            if (section === 'main') {
+                document.getElementById('dashboard-main').classList.remove('hidden');
+            } else {
+                document.getElementById(`dashboard-${section}`).classList.remove('hidden');
+            }
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Update data if needed
+            if (section === 'bookings') {
+                updateBookingsTable();
+            } else if (section === 'payments') {
+                updatePaymentsTable();
+            }
+        }
+
+        function updateDashboardData() {
+            // Update cards
+            document.getElementById('totalBookings').textContent = mockBookings.length;
+            document.getElementById('availableRooms').textContent = '5';
+            document.getElementById('pendingPayments').textContent = 
+                mockPayments.filter(p => p.status === 'pending').length;
+            
+            const totalPaid = mockPayments
+                .filter(p => p.status === 'completed')
+                .reduce((sum, p) => sum + p.amount, 0);
+            document.getElementById('totalPaid').textContent = `NRS ${totalPaid.toLocaleString()}`;
+
+            // Update recent bookings table
+            updateRecentBookings();
+            
+            // Update recent payments table
+            updateRecentPayments();
+        }
+
+        function updateRecentBookings() {
+            const tbody = document.querySelector('#recentBookingsTable tbody');
+            tbody.innerHTML = '';
+            
+            mockBookings.slice(0, 3).forEach(booking => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>#${booking.id}</td>
+                    <td>${booking.roomType} - ${booking.roomNumber}</td>
+                    <td>${formatDate(booking.checkIn)}</td>
+                    <td>${formatDate(booking.checkOut)}</td>
+                    <td>NRS ${booking.totalAmount.toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge status-${booking.status}">
+                            ${capitalize(booking.status)}
+                        </span>
+                        <span class="payment-badge status-${booking.paymentStatus}">
+                            ${capitalize(booking.paymentStatus)}
+                        </span>
+                    </td>
+                    <td>
+                        ${booking.status === 'pending' && booking.paymentStatus === 'unpaid' ? 
+                            '<button class="btn btn-primary btn-sm" onclick="showPayment(' + booking.id + ')">Pay Now</button>' : ''}
+                    </td>
+                `;
+            });
+        }
+
+        function updateRecentPayments() {
+            const tbody = document.querySelector('#recentPaymentsTable tbody');
+            tbody.innerHTML = '';
+            
+            mockPayments.slice(0, 2).forEach(payment => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>#${payment.id}</td>
+                    <td>${payment.roomType} - ${payment.roomNumber}</td>
+                    <td>${payment.paymentDate}</td>
+                    <td>${capitalize(payment.paymentMethod)}</td>
+                    <td>NRS ${payment.amount.toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge status-${payment.status}">
+                            ${capitalize(payment.status)}
+                        </span>
+                    </td>
+                `;
+            });
+        }
+
+        function updateBookingsTable() {
+            const tbody = document.querySelector('#allBookingsTable tbody');
+            tbody.innerHTML = '';
+            
+            mockBookings.forEach(booking => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>#${booking.id}</td>
+                    <td>${booking.roomType} - ${booking.roomNumber}</td>
+                    <td>${formatDate(booking.checkIn)}</td>
+                    <td>${formatDate(booking.checkOut)}</td>
+                    <td>NRS ${booking.totalAmount.toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge status-${booking.status}">
+                            ${capitalize(booking.status)}
+                        </span>
+                        <span class="payment-badge status-${booking.paymentStatus}">
+                            ${capitalize(booking.paymentStatus)}
+                        </span>
+                    </td>
+                    <td>
+                        ${booking.status === 'pending' && booking.paymentStatus === 'unpaid' ? 
+                            '<button class="btn btn-primary btn-sm" onclick="showPayment(' + booking.id + ')">Pay Now</button>' : 
+                            booking.paymentStatus === 'paid' ? '<span class="status-badge status-completed">Paid</span>' : ''}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            ${booking.status === 'pending' ? 
+                                '<button class="btn btn-danger btn-sm" onclick="cancelBooking(' + booking.id + ')">Cancel</button>' : 
+                                booking.status === 'confirmed' ? 
+                                '<button class="btn btn-warning btn-sm" onclick="cancelBooking(' + booking.id + ')">Request Cancel</button>' : 
+                                '<span class="text-muted">No actions</span>'}
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function updatePaymentsTable() {
+            const tbody = document.querySelector('#allPaymentsTable tbody');
+            tbody.innerHTML = '';
+            
+            mockPayments.forEach(payment => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>#${payment.id}</td>
+                    <td>${payment.roomType} - ${payment.roomNumber}</td>
+                    <td>${payment.paymentDate}</td>
+                    <td>${capitalize(payment.paymentMethod)}</td>
+                    <td>${payment.transactionId || 'N/A'}</td>
+                    <td>NRS ${payment.amount.toLocaleString()}</td>
+                    <td>
+                        <span class="status-badge status-${payment.status}">
+                            ${capitalize(payment.status)}
+                        </span>
+                    </td>
+                    <td>
+                        ${payment.status === 'pending' ? 
+                            '<button class="btn btn-primary btn-sm" onclick="editPayment(' + payment.id + ')">Edit</button>' : ''}
+                    </td>
+                `;
+            });
+        }
+
+        function showPayment(bookingId) {
+            const booking = mockBookings.find(b => b.id === bookingId);
+            if (booking) {
+                document.getElementById('paymentBookingId').value = bookingId;
+                document.getElementById('paymentDetails').innerHTML = `
+                    <div class="booking-info">
+                        <p><strong>Room:</strong> ${booking.roomType} - ${booking.roomNumber}</p>
+                        <p><strong>Amount:</strong> NRS ${booking.totalAmount.toLocaleString()}</p>
+                        <p><strong>Dates:</strong> ${formatDate(booking.checkIn)} to ${formatDate(booking.checkOut)}</p>
+                    </div>
+                `;
+                document.getElementById('paymentModal').classList.add('show');
+            }
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            document.getElementById('paymentMethod').value = method;
+            
+            document.querySelectorAll('.method-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+
+            const transactionField = document.getElementById('transactionField');
+            if (method === 'cash') {
+                transactionField.style.display = 'none';
+                document.getElementById('transactionId').required = false;
+            } else {
+                transactionField.style.display = 'block';
+                document.getElementById('transactionId').required = true;
+            }
+        }
+
+        function cancelBooking(bookingId) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                alert('Booking cancelled successfully!');
+                // In real app, would update the booking status
+            }
+        }
+
+        function editPayment(paymentId) {
+            alert('Edit payment: ' + paymentId);
+        }
+
+        // Form Submissions
+        document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            currentUser = {
+                name: document.getElementById('loginEmail').value.split('@')[0],
+                email: document.getElementById('loginEmail').value
+            };
+            hideModal('loginModal');
+            showDashboard();
+        });
+
+        document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            currentUser = {
+                name: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value
+            };
+            hideModal('registerModal');
+            showDashboard();
+        });
+
+        document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Booking submitted successfully!');
+            showDashboardSection('main');
+        });
+
+        document.getElementById('profileForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Profile updated successfully!');
+        });
+
+        document.getElementById('paymentForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Payment submitted successfully!');
+            hideModal('paymentModal');
+        });
+
+        // Utility Functions
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('en-US', { 
+                day: 'numeric', 
+                month: 'short', 
+                year: 'numeric' 
+            });
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Booking form calculation
+        document.getElementById('checkIn')?.addEventListener('change', calculateTotal);
+        document.getElementById('checkOut')?.addEventListener('change', calculateTotal);
+        document.getElementById('roomSelect')?.addEventListener('change', calculateTotal);
+
+        function calculateTotal() {
+            const roomSelect = document.getElementById('roomSelect');
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            
+            if (roomSelect.value && checkIn && checkOut) {
+                const price = parseFloat(roomSelect.selectedOptions[0].dataset.price);
+                const days = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+                
+                if (days > 0) {
+                    const total = price * days;
+                    document.getElementById('totalAmount').textContent = 'NRS ' + total.toLocaleString();
+                }
+            }
+        }
+
+        // Set minimum dates for booking
+        const today = new Date().toISOString().split('T')[0];
+        const checkInInput = document.getElementById('checkIn');
+        const checkOutInput = document.getElementById('checkOut');
+        
+        if (checkInInput) {
+            checkInInput.min = today;
+            checkInInput.addEventListener('change', function() {
+                if (checkOutInput) {
+                    checkOutInput.min = this.value;
+                }
+            });
+        }
+
+        // Password match validation
+        document.getElementById('regPassword')?.addEventListener('input', validatePassword);
+        document.getElementById('regConfirmPassword')?.addEventListener('input', validatePassword);
+
+        function validatePassword() {
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirmPassword').value;
+            
+            if (confirm && password !== confirm) {
+                document.getElementById('regConfirmPassword').setCustomValidity('Passwords do not match');
+            } else {
+                document.getElementById('regConfirmPassword').setCustomValidity('');
+            }
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255,255,255,0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = 'var(--white)';
+                header.style.backdropFilter = 'none';
+            }
+        });
+
+        // Initialize
+        updateAuthButtons();
+    </script>
