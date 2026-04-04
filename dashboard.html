@@ -484,21 +484,17 @@
             } else {
                 document.getElementById(`dashboard-${section}`).classList.remove('hidden');
             }
-
-            // Update active nav link
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
             event.currentTarget.classList.add('active');
 
-            // Update data if needed
             if (section === 'bookings') {
                 updateBookingsTable();
             } else if (section === 'payments') {
                 updatePaymentsTable();
             }
         }
-
         function updateDashboardData() {
             // Update cards
             document.getElementById('totalBookings').textContent = mockBookings.length;
@@ -511,10 +507,8 @@
                 .reduce((sum, p) => sum + p.amount, 0);
             document.getElementById('totalPaid').textContent = `NRS ${totalPaid.toLocaleString()}`;
 
-            // Update recent bookings table
             updateRecentBookings();
             
-            // Update recent payments table
             updateRecentPayments();
         }
 
